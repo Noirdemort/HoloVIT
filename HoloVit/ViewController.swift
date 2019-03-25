@@ -137,7 +137,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet weak var refreshing: UIActivityIndicatorView!
     
+    @IBOutlet weak var refreshButton: UIButton!
+    
     @IBAction func refreshValues(_ sender: Any) {
+        refreshButton.setTitle("Refreshing... ", for: .normal)
         refreshing.startAnimating()
         let url = URL(string: "https://holoshield.herokuapp.com/get_data")!
         
@@ -160,6 +163,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             updateText(text: dataStorage[block.key] ?? "Data not available", atPosition: block.value)
         }
         refreshing.stopAnimating()
+        refreshButton.setTitle("Refresh", for: .normal)
+
     }
     
     

@@ -22,11 +22,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </arscnView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cJ4-Qd-m3U">
-                                <rect key="frame" x="246" y="513" width="62" height="35"/>
+                                <rect key="frame" x="20" y="513" width="280" height="35"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="62" id="0Up-QD-iDf"/>
-                                    <constraint firstAttribute="height" constant="35" id="FAW-hE-ZzH"/>
+                                    <constraint firstAttribute="height" constant="35" id="Q7Q-sO-DXi"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                 <state key="normal" title="Refresh">
@@ -47,30 +46,32 @@
                                     <constraint firstAttribute="width" constant="200" id="Bdr-cM-PSK"/>
                                     <constraint firstAttribute="height" constant="200" id="IEl-TC-LQY"/>
                                 </constraints>
-                                <color key="color" red="1" green="0.2527923882" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="color" red="1" green="0.69019607839999997" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="cJ4-Qd-m3U" secondAttribute="bottom" constant="20" id="0ob-Zh-irv"/>
                             <constraint firstItem="1Ml-81-WTI" firstAttribute="centerY" secondItem="U0K-SW-4ec" secondAttribute="centerY" id="FwP-DD-HJX"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
+                            <constraint firstItem="cJ4-Qd-m3U" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" constant="20" id="UXk-Ut-e7G"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="cJ4-Qd-m3U" secondAttribute="bottom" constant="20" id="XPb-nO-Y9c"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="cJ4-Qd-m3U" secondAttribute="trailing" constant="12" id="kKp-rC-B6C"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="cJ4-Qd-m3U" secondAttribute="trailing" constant="20" id="ka2-cQ-MNr"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
                             <constraint firstItem="1Ml-81-WTI" firstAttribute="centerX" secondItem="U0K-SW-4ec" secondAttribute="centerX" id="z60-gB-1OH"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                     </view>
                     <connections>
+                        <outlet property="refreshButton" destination="cJ4-Qd-m3U" id="1M3-4D-0vK"/>
                         <outlet property="refreshing" destination="1Ml-81-WTI" id="Ijk-Wc-v1a"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
+            <point key="canvasLocation" x="135" y="133.09859154929578"/>
         </scene>
     </scenes>
 </document>
