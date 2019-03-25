@@ -148,7 +148,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             myStringArr.removeLast()
             for str in myStringArr{
                 var electricalData = str.components(separatedBy: "$")
-                electricalData.removeLast()
                 self.dataStorage["\(electricalData[0])"] = "\(electricalData[1]) V, \(electricalData[2]) Amps"
             }
 
