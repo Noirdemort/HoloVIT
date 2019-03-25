@@ -14,6 +14,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
+    var detectedOnce = false
+    
+    var blockPosition: [String: SCNVector3] = [:]
+    var dataStorage: [String:String] = [:]
+    var blockTextNode: [SCNNode] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,7 +34,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the scene to the view
         sceneView.scene = scene
-        placeSuuKyi()
         placeSJT()
     }
     
@@ -52,15 +57,55 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
 
-    func placeSuuKyi(){
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+     
+        if !detectedOnce {
+            guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+            placePlane(withPlaneAnchor: planeAnchor)
+            placeSuuKyi(withPlaneAnchor: planeAnchor)
+            updateText(text: "@220 Amp", atPosition: SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z))
+            blockPosition["mb"] = SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z)
+            sceneView.scene.rootNode.position = SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z)
+            detectedOnce = true
+        }
+    }
+    
+    func updateText(text: String, atPosition: SCNVector3){
+//        self.textNode.removeFromParentNode()
+//        let textNode = SCNNode()
+        let textGeometry = SCNText(string: text , extrusionDepth: 0.5)
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        let textNode = SCNNode(geometry: textGeometry)
+        textNode.position = SCNVector3(atPosition.x, atPosition.y+0.4, atPosition.z)
+        textNode.scale = SCNVector3(0.002, 0.002, 0.002)
+        sceneView.scene.rootNode.addChildNode(textNode)
+        blockTextNode.append(textNode)
+
+    }
+    
+    func placePlane(withPlaneAnchor planeAnchor : ARPlaneAnchor){
+        let gridMaterial = SCNMaterial()
+        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/base.jpg")
+        let plane = SCNPlane(width: CGFloat(5), height: CGFloat(5))
+        plane.materials = [gridMaterial]
+        
+        let planeNode = SCNNode()
+        planeNode.position = SCNVector3(x : planeAnchor.center.x, y: planeAnchor.center.y-10, z: planeAnchor.center.z)
+        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
+        planeNode.geometry = plane
+        sceneView.scene.rootNode.addChildNode(planeNode)
+    }
+    
+    func placeSuuKyi(withPlaneAnchor planeAnchor : ARPlaneAnchor){
         let tempScene = SCNScene(named: "art.scnassets/suu_kyi.dae")!
         var allNodes: [SCNNode] = []
         
-        let position = SCNVector3(0.7, 0, -0.7)
+        let position = SCNVector3(planeAnchor.center.x+0.7, planeAnchor.center.y, planeAnchor.center.z-0.7)
         let scale = SCNVector3(0.003,0.003,0.003)
         let allNodeObjects = ["pCube86","pCube85","pCube88","pCube83","pCube75","pCube3",
             "pCube2","pCylinder3","pCylinder16", "pPipe1", "pCube1", "pCube65", "pCylinder6"]
         
+        blockPosition["skb"] = position
         for object in allNodeObjects{
             let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
             node.position = position
@@ -71,6 +116,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         for updatedNode in allNodes {
             sceneView.scene.rootNode.addChildNode(updatedNode)
         }
+        updateText(text: "suu kyi data", atPosition: position)
+
     }
     
     func placeSJT(){
@@ -88,9 +135,33 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 */
     
+    @IBOutlet weak var refreshing: UIActivityIndicatorView!
     
-    
-  
+    @IBAction func refreshValues(_ sender: Any) {
+        refreshing.startAnimating()
+        let url = URL(string: "https://holoshield.herokuapp.com/get_data")!
+        
+        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+            guard let data = data else { return }
+            let meta = String(data: data, encoding: .utf8)!
+            var myStringArr = meta.components(separatedBy: "!#!")
+            myStringArr.removeLast()
+            for str in myStringArr{
+                var electricalData = str.components(separatedBy: "$")
+                electricalData.removeLast()
+                self.dataStorage["\(electricalData[0])"] = "\(electricalData[1]) V, \(electricalData[2]) Amps"
+            }
+
+        }
+        task.resume()
+        for block in blockTextNode{
+            block.removeFromParentNode()
+        }
+        for block in blockPosition{
+            updateText(text: dataStorage[block.key] ?? "Data not available", atPosition: block.value)
+        }
+        refreshing.stopAnimating()
+    }
     
     
     func session(_ session: ARSession, didFailWithError error: Error) {
