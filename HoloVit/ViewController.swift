@@ -19,6 +19,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var blockPosition: [String: SCNVector3] = [:]
     var dataStorage: [String:String] = [:]
     var blockTextNode: [SCNNode] = []
+    var blockToBuilding : [String:[SCNNode]] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +35,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the scene to the view
         sceneView.scene = scene
-        placeSJT()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,6 +63,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
             placePlane(withPlaneAnchor: planeAnchor)
             placeSuuKyi(withPlaneAnchor: planeAnchor)
+            placeSJT(withPlaneAnchor: planeAnchor)
+            placeSMV(withPlaneAnchor: planeAnchor)
+            placeTT(withPlaneAnchor: planeAnchor)
             updateText(text: "@220 Amp", atPosition: SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z))
             blockPosition["mb"] = SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z)
             sceneView.scene.rootNode.position = SCNVector3(x: planeAnchor.center.x, y: planeAnchor.center.y, z: planeAnchor.center.z)
@@ -76,7 +79,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let textGeometry = SCNText(string: text , extrusionDepth: 0.5)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.red
         let textNode = SCNNode(geometry: textGeometry)
-        textNode.position = SCNVector3(atPosition.x, atPosition.y+0.4, atPosition.z)
+        textNode.position = SCNVector3(atPosition.x, atPosition.y+0.15, atPosition.z)
         textNode.scale = SCNVector3(0.002, 0.002, 0.002)
         sceneView.scene.rootNode.addChildNode(textNode)
         blockTextNode.append(textNode)
@@ -104,12 +107,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let scale = SCNVector3(0.003,0.003,0.003)
         let allNodeObjects = ["pCube86","pCube85","pCube88","pCube83","pCube75","pCube3",
             "pCube2","pCylinder3","pCylinder16", "pPipe1", "pCube1", "pCube65", "pCylinder6"]
-        
+        blockToBuilding["skb"] = []
         blockPosition["skb"] = position
         for object in allNodeObjects{
             let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
             node.position = position
             node.scale = scale
+            blockToBuilding["skb"]?.append(node)
             allNodes.append(node)
         }
         
@@ -120,14 +124,108 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     }
     
-    func placeSJT(){
-        print("Place SJT")
+    func placeSJT(withPlaneAnchor planeAnchor : ARPlaneAnchor){
+        let tempScene = SCNScene(named: "art.scnassets/sjt.dae")!
+        var allNodes: [SCNNode] = []
+        
+        let position = SCNVector3(planeAnchor.center.x-0.7, planeAnchor.center.y+0.2, planeAnchor.center.z-0.7)
+        let scale = SCNVector3(0.001,0.001,0.001)
+        let allNodeObjects = ["right", "windows", "Cylinder", "front_shed", "Cube_1_7", "Cube_3_5", "Cube_1_6", "Cube_2_6", "Cube_4_3", "Cube_3", "Cube_3_6", "Cube_1_7", "Cube_6", "Cube_2_2", "Cube_2_3"]
+        blockToBuilding["sjt"] = []
+        blockPosition["sjt"] = position
+        for object in allNodeObjects{
+            let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
+            node.position = position
+            node.scale = scale
+            node.eulerAngles.x = .pi/2
+            blockToBuilding["sjt"]?.append(node)
+            allNodes.append(node)
+        }
+        
+        for updatedNode in allNodes {
+            sceneView.scene.rootNode.addChildNode(updatedNode)
+        }
+        updateText(text: "sjt data", atPosition: position)
     }
+    
+    func placeSMV(withPlaneAnchor planeAnchor : ARPlaneAnchor){
+        let tempScene = SCNScene(named: "art.scnassets/smv.dae")!
+        var allNodes: [SCNNode] = []
+        
+        let position = SCNVector3(planeAnchor.center.x+0.7, planeAnchor.center.y, planeAnchor.center.z)
+        let scale = SCNVector3(0.0003,0.0003,0.0003)
+        let allNodeObjects = ["smv","Cube","Cube_1","Cube_2","Cube_3","Cube_4",
+                              "Cube_5","Cube_6"]
+        blockToBuilding["smv"] = []
+        blockPosition["smv"] = position
+        for object in allNodeObjects{
+            let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
+            node.position = position
+            node.scale = scale
+            blockToBuilding["smv"]?.append(node)
+            allNodes.append(node)
+        }
+        
+        for updatedNode in allNodes {
+            sceneView.scene.rootNode.addChildNode(updatedNode)
+        }
+        updateText(text: "smv data", atPosition: position)
+
+    }
+    
+    func placeTT(withPlaneAnchor planeAnchor : ARPlaneAnchor){
+        let tempScene = SCNScene(named: "art.scnassets/tt.dae")!
+        var allNodes: [SCNNode] = []
+        
+        let position = SCNVector3(planeAnchor.center.x, planeAnchor.center.y, planeAnchor.center.z-0.5)
+        let scale = SCNVector3(0.0003,0.0003,0.00003)
+        let allNodeObjects = ["Object_1", "Object_2", "Object_3", "Object_4", "Object_5", "Object_6", "Object_7", "Object_8", "Object_9", "Object_10", "Object_11", "Object_12", "Object_13", "Object_14", "Object_15", "Object_16", "Object_17", "Object_18", "Object_19", "Object_20", "Object_21", "Object_22", "Object_23", "Object_24", "Object_25", "Object_26", "Object_27"]
+        blockPosition["tt"] = position
+        blockToBuilding["tt"] = []
+        for object in allNodeObjects{
+            let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
+            node.position = position
+            node.scale = scale
+            node.eulerAngles.x = .pi/2
+            node.eulerAngles.y = -.pi/2
+            node.eulerAngles.z = -.pi/2
+            blockToBuilding["tt"]?.append(node)
+            allNodes.append(node)
+        }
+        
+        for updatedNode in allNodes {
+            sceneView.scene.rootNode.addChildNode(updatedNode)
+        }
+        updateText(text: "tt data", atPosition: position)
+        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let touchLocation = touch.location(in: sceneView)
+            let results = sceneView.hitTest(touchLocation, options: nil)
+            if let tappednode = results.first?.node {
+                //do something with tapped object
+                print(tappednode)
+                for block in blockToBuilding {
+                    if block.value.contains(tappednode){
+                        print(block.key)
+                        var pos = blockPosition[block.key]
+                        pos!.y += 0.5
+                        updateText(text: "Hi", atPosition: pos!)
+                    }
+                }
+            }
+
+        }
+    }
+    
   
+    
     // MARK: - ARSCNViewDelegate
     
 /*
-    // Override to create and configure nodes for anchors added to the view's session.
+    // Override to create and configure nodes for anchors added to the view"s session.
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         let node = SCNNode()
      
