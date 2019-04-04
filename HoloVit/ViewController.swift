@@ -19,7 +19,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var blockPosition: [String: SCNVector3] = [:]
     var dataStorage: [String:String] = [:]
     var blockTextNode: [SCNNode] = []
-    var blockToBuilding : [String:[SCNNode]] = [:]
+    var blockToBuilding: [String:[SCNNode]] = [:]
+    var tempMap: [String: SCNNode] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,12 +84,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         textNode.scale = SCNVector3(0.002, 0.002, 0.002)
         sceneView.scene.rootNode.addChildNode(textNode)
         blockTextNode.append(textNode)
-
     }
+    
+    
+    func updateTempText(text: String, atPosition: SCNVector3, building: String){
+        //        self.textNode.removeFromParentNode()
+        //        let textNode = SCNNode()
+        let textGeometry = SCNText(string: text , extrusionDepth: 0.5)
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.red
+        let textNode = SCNNode(geometry: textGeometry)
+        textNode.position = SCNVector3(atPosition.x, atPosition.y+0.15, atPosition.z)
+        textNode.scale = SCNVector3(0.002, 0.002, 0.002)
+        sceneView.scene.rootNode.addChildNode(textNode)
+        tempMap[building] = textNode
+    }
+    
     
     func placePlane(withPlaneAnchor planeAnchor : ARPlaneAnchor){
         let gridMaterial = SCNMaterial()
-        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/base.jpg")
+        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/white_wallpaper.jpg")
         let plane = SCNPlane(width: CGFloat(5), height: CGFloat(5))
         plane.materials = [gridMaterial]
         
@@ -103,12 +117,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let tempScene = SCNScene(named: "art.scnassets/suu_kyi.dae")!
         var allNodes: [SCNNode] = []
         
-        let position = SCNVector3(planeAnchor.center.x+0.7, planeAnchor.center.y, planeAnchor.center.z-0.7)
+        var position = SCNVector3(planeAnchor.center.x+0.7, planeAnchor.center.y, planeAnchor.center.z-0.7)
         let scale = SCNVector3(0.003,0.003,0.003)
         let allNodeObjects = ["pCube86","pCube85","pCube88","pCube83","pCube75","pCube3",
             "pCube2","pCylinder3","pCylinder16", "pPipe1", "pCube1", "pCube65", "pCylinder6"]
         blockToBuilding["skb"] = []
-        blockPosition["skb"] = position
         for object in allNodeObjects{
             let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
             node.position = position
@@ -120,16 +133,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         for updatedNode in allNodes {
             sceneView.scene.rootNode.addChildNode(updatedNode)
         }
+        
+        position.y += 0.2
+        blockPosition["skb"] = position
         updateText(text: "suu kyi data", atPosition: position)
 
     }
+    
     
     func placeSJT(withPlaneAnchor planeAnchor : ARPlaneAnchor){
         let tempScene = SCNScene(named: "art.scnassets/sjt.dae")!
         var allNodes: [SCNNode] = []
         
-        let position = SCNVector3(planeAnchor.center.x-0.7, planeAnchor.center.y+0.2, planeAnchor.center.z-0.7)
-        let scale = SCNVector3(0.001,0.001,0.001)
+        let position = SCNVector3(planeAnchor.center.x-0.5, planeAnchor.center.y+0.1, planeAnchor.center.z-0.5)
+        let scale = SCNVector3(0.001, 0.001, 0.001)
         let allNodeObjects = ["right", "windows", "Cylinder", "front_shed", "Cube_1_7", "Cube_3_5", "Cube_1_6", "Cube_2_6", "Cube_4_3", "Cube_3", "Cube_3_6", "Cube_1_7", "Cube_6", "Cube_2_2", "Cube_2_3"]
         blockToBuilding["sjt"] = []
         blockPosition["sjt"] = position
@@ -152,7 +169,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let tempScene = SCNScene(named: "art.scnassets/smv.dae")!
         var allNodes: [SCNNode] = []
         
-        let position = SCNVector3(planeAnchor.center.x+0.7, planeAnchor.center.y, planeAnchor.center.z)
+        let position = SCNVector3(planeAnchor.center.x+0.9, planeAnchor.center.y, planeAnchor.center.z)
         let scale = SCNVector3(0.0003,0.0003,0.0003)
         let allNodeObjects = ["smv","Cube","Cube_1","Cube_2","Cube_3","Cube_4",
                               "Cube_5","Cube_6"]
@@ -177,10 +194,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let tempScene = SCNScene(named: "art.scnassets/tt.dae")!
         var allNodes: [SCNNode] = []
         
-        let position = SCNVector3(planeAnchor.center.x, planeAnchor.center.y, planeAnchor.center.z-0.5)
-        let scale = SCNVector3(0.0003,0.0003,0.00003)
+        var position = SCNVector3(planeAnchor.center.x-0.2, planeAnchor.center.y, planeAnchor.center.z-1)
+        let scale = SCNVector3(0.0001, 0.0001, 0.0001)
         let allNodeObjects = ["Object_1", "Object_2", "Object_3", "Object_4", "Object_5", "Object_6", "Object_7", "Object_8", "Object_9", "Object_10", "Object_11", "Object_12", "Object_13", "Object_14", "Object_15", "Object_16", "Object_17", "Object_18", "Object_19", "Object_20", "Object_21", "Object_22", "Object_23", "Object_24", "Object_25", "Object_26", "Object_27"]
-        blockPosition["tt"] = position
         blockToBuilding["tt"] = []
         for object in allNodeObjects{
             let node = tempScene.rootNode.childNode(withName: object, recursively: true)!
@@ -196,11 +212,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         for updatedNode in allNodes {
             sceneView.scene.rootNode.addChildNode(updatedNode)
         }
+        position.y += 0.2
+        position.x += 0.3
+        blockPosition["tt"] = position
         updateText(text: "tt data", atPosition: position)
         
     }
     
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        refreshing.startAnimating()
         if let touch = touches.first {
             let touchLocation = touch.location(in: sceneView)
             let results = sceneView.hitTest(touchLocation, options: nil)
@@ -211,13 +232,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     if block.value.contains(tappednode){
                         print(block.key)
                         var pos = blockPosition[block.key]
-                        pos!.y += 0.5
-                        updateText(text: "Hi", atPosition: pos!)
+                        pos!.y += 0.3
+                        
+                        if tempMap.keys.contains(block.key) {
+                            tempMap[block.key]?.removeFromParentNode()
+                        }
+                        
+                        let url = URL(string: "https://holoshield.herokuapp.com/fetch_tmp/\(block.key)")!
+                        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+                            guard let data = data else { return }
+                            let meta = String(data: data, encoding: .utf8)!
+                            self.updateTempText(text: meta, atPosition: pos!, building: block.key)
+                        }
+                        task.resume()
+                        
                     }
                 }
             }
 
         }
+        refreshing.stopAnimating()
     }
     
   
@@ -257,11 +291,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         for block in blockTextNode{
             block.removeFromParentNode()
         }
+        
         for block in blockPosition{
             updateText(text: dataStorage[block.key] ?? "Data not available", atPosition: block.value)
         }
         refreshing.stopAnimating()
-        refreshButton.setTitle("Refresh", for: .normal)
+        refreshButton.setTitle("Refresh again!", for: .normal)
 
     }
     
